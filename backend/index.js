@@ -1,9 +1,10 @@
 import express from "express";
-// import userRoute from "./routes/users.js";
+import userRoute from "./routes/users.js";
 import postRoute from "./routes/posts.js";
 import commentRoute from "./routes/comments.js";
 import likeRoute from "./routes/likes.js";
 import authRoute from "./routes/auth.js";
+import followRoute from "./routes/follow.js";
 import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
@@ -35,11 +36,12 @@ app.post("/upload", upload.single("file"), (req, res) => {
   const file = req.file;
   res.status(200).json(file.filename);
 });
-// app.use("/users", userRoute);
+app.use("/users", userRoute);
 app.use("/comment", commentRoute);
 app.use("/like", likeRoute);
 app.use("/auth", authRoute);
 app.use("/post", postRoute);
+app.use("/follow", followRoute);
 
 app.listen(3000, () => {
   console.log("server is running....");

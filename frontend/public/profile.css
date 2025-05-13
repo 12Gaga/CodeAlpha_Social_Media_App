@@ -1,0 +1,115 @@
+body {
+  background-color: rgba(204, 201, 196, 0.374);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.userProfileBox {
+  width: 900px;
+}
+
+.coverPic {
+  width: 100%;
+  height: 650px;
+}
+
+.profilePicBox {
+  position: relative;
+}
+
+.profilePic {
+  border-radius: 100%;
+  width: 190px;
+  height: 190px;
+  position: absolute;
+  top: -100px;
+  left: 40%;
+}
+
+.parentInfo {
+  margin-top: 25px;
+}
+
+.userInfoBox {
+  text-align: center;
+  width: 810px;
+  padding: 70px 15px 30px 15px;
+  background-color: white;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+.profileUsername {
+  font-size: 25px;
+}
+
+.infoBox {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon3 {
+  font-size: 25px;
+}
+
+.followBtn,
+.updateBtn,
+.profileBtn {
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 10px;
+  width: 130px;
+  background-color: rgb(0, 200, 255);
+  font-weight: 550;
+  margin-top: 3%;
+}
+
+.userPosts {
+  width: 840px;
+  margin: 0 auto;
+  background-color: chartreuse;
+  height: 10px;
+}
+
+.updateBox {
+  position: absolute;
+  top: 50%;
+  display: none;
+}
+
+.updatePage {
+  width: 500px;
+  padding: 10%;
+  margin: 0 auto;
+  background-color: rgb(243, 242, 241);
+  border-radius: 10px;
+  box-shadow: 8px 8px rgba(128, 128, 128, 0.267);
+}
+
+.updateName {
+  padding: 2%;
+  width: 300px;
+  font-size: 20px;
+  border-radius: 10px;
+  background-color: rgba(222, 217, 217, 0.438);
+}
+
+.coverImage,
+.profileImage {
+  width: 200px;
+  border-radius: 10px;
+}
+
+.coverImageBox,
+.profileImageBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.icon4 {
+  font-size: 35px;
+  position: absolute;
+  left: 80%;
+  top: 5%;
+}

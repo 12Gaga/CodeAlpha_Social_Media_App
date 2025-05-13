@@ -1,6 +1,7 @@
-// import express from "express";
-// import { getUser } from "../controllers/user.js";
-// const router = express.Router();
+import express from "express";
+import { getUser, updateUser } from "../controllers/user.js";
+const router = express.Router();
 
-// router.get("/find/:userId", getUser);
-// export default router;
+router.get("/find/:userId", getUser);
+router.put("/updateUser", updateUser);
+export default router;

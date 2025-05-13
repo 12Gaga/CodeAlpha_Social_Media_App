@@ -2,7 +2,7 @@ const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 console.log("currentUser", currentUser);
 
 const currentUserProfile = document.querySelector(".currentUserProfile");
-currentUserProfile.src = currentUser.profilePic;
+currentUserProfile.src = `./upload/${currentUser.profilePic}`;
 
 //Comments
 let commentDesc = "";
@@ -26,7 +26,7 @@ const gettingComments = async (postId, showCommentBox) => {
       boxForEachComment.className = "boxForEachComment";
       boxForEachComment.innerHTML = `
        <div class="info">
-          <img class="userProfile" src=${comment.profilePic}/>
+          <img class="userProfile" src="./upload/${comment.profilePic}"/>
           <span class="userName">${comment.name}</span>
         </div>
          <span class="descComment">${comment.desc}</span>
@@ -117,6 +117,7 @@ const handleLike = async (postId, likes, likeBox) => {
 let posts = [];
 const postsBox = document.querySelector(".posts");
 const gettingPosts = async () => {
+  postsBox.innerHTML = "";
   try {
     const res = await fetch("http://localhost:3000/post/getPost", {
       method: "GET",
@@ -134,14 +135,15 @@ const gettingPosts = async () => {
       const box = document.createElement("div");
       box.className = "postBox";
       box.id = post.id;
-      //const heartIcon =currentUser.id===
       box.innerHTML = `
         <div class="info">
-          <img class="userProfile" src=${post.profilePic}/>
+          <img class="userProfile postProfile" id=${
+            post.userId
+          } src="./upload/${post.profilePic}"/>
           <span class="userName">${post.name}</span>
         </div>
         <p class="desc">${post.desc}</p>
-        <img class="postImg" src=${post.img}/>
+        <img class="postImg" src="./upload/${post.img}"/>
         <div class="activities">
           <div class="activity_type likeBox">
             ${likeIcon}<span class="text likeText">${likes.length} ${
@@ -209,12 +211,48 @@ const gettingPosts = async () => {
   } catch (err) {
     console.log("postError", err);
   }
+  //click post profile
+  const postProfiles = document.querySelectorAll(".postProfile");
+  for (const profile of postProfiles) {
+    profile.addEventListener("click", () => {
+      localStorage.setItem("profileUserId", profile.id);
+      location.replace(
+        "/Social-media-app(Task-2)/frontend/public/profile.html"
+      );
+    });
+  }
 };
 gettingPosts();
 
 //add Post
 let file;
 let desc;
+
+//add desc
+const descTag = document.querySelector(".postDesc");
+descTag.addEventListener("keyup", (e) => {
+  desc = e.target.value;
+  console.log("postDescription", desc);
+});
+
+//add image
+const imageInput = document.querySelector("#file");
+const imgTag = document.querySelector(".image");
+imageInput.addEventListener("change", function (e) {
+  file = e.target.files[0];
+  console.log("selectedFile", file);
+  if (file) {
+    imgTag.style.display = "block";
+    imgTag.src = URL.createObjectURL(file);
+  }
+});
+
+//click post button
+const btnTag = document.querySelector(".postBtn");
+btnTag.addEventListener("click", (e) => {
+  handleClick(e);
+});
+
 const upload = async (e) => {
   try {
     const formData = new FormData();
@@ -243,38 +281,11 @@ const handleClick = async (e) => {
     });
     const data = await res.json();
     console.log("Post submitted:", data);
+    imgTag.style.display = "none";
+    descTag.value = "";
+    gettingPosts();
     return data;
   } catch (err) {
     console.log(err);
   }
 };
-
-//add desc
-const descTag = document.querySelector(".postDesc");
-descTag.addEventListener("keyup", (e) => {
-  desc = e.target.value;
-  console.log("postDescription", desc);
-});
-
-//add image
-const imageInput = document.querySelector("#file");
-const imgTag = document.querySelector(".image");
-imageInput.addEventListener("change", function (e) {
-  file = e.target.files[0];
-  console.log("selectedFile", file);
-  if (file) {
-    imgTag.style.display = "block";
-    imgTag.src = URL.createObjectURL(file);
-  }
-});
-
-//click post button
-const btnTag = document.querySelector(".postBtn");
-btnTag.addEventListener("click", (e) => {
-  e.preventDefault();
-  handleClick(e);
-});
-
-//Comments
-if (posts.length) {
-}

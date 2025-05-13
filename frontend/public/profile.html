@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
+    />
+    <link rel="stylesheet" href="profile.css" />
+    <link rel="stylesheet" href="home.css" />
+  </head>
+  <body>
+    <div class="userProfileBox"></div>
+    <div class="userProfileBox">
+      <div class="userPosts"></div>
+    </div>
+
+    <div class="userProfileBox updateBox">
+      <div class="updatePage">
+        <i class="bx bx-x icon4"></i>
+        <div class="coverImageBox">
+          <div>
+            <input type="file" id="coverFile" style="display: none" />
+            <label for="coverFile" class="upload-label">
+              📷 Add Cover Image
+            </label>
+          </div>
+          <img class="coverImage" style="display: none" />
+        </div>
+        <div class="profileImageBox">
+          <div>
+            <input type="file" id="profileFile" style="display: none" />
+            <label for="profileFile" class="upload-label">
+              📷 Add Profile Image
+            </label>
+          </div>
+          <img class="profileImage" style="display: none" />
+        </div>
+
+        <input class="updateName" type="text" placeholder="Name" /><br />
+        <div style="display: flex; justify-content: flex-end; margin-top: 20px">
+          <button type="button" class="profileBtn">Comfrim</button>
+        </div>
+      </div>
+    </div>
+    <script src="profile.js"></script>
+  </body>
+</html>
