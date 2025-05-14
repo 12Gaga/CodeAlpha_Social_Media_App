@@ -3,8 +3,29 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.middle {
+  width: 40%;
+  height: 100vh;
+  overflow: scroll;
+}
+
+.middle::-webkit-scrollbar {
+  display: none;
+}
+
+#leftPage,
+#rightPage {
+  width: 28%;
+  border-radius: 15px;
+  height: 100vh;
+}
+
+#leftPage {
+  background-color: white;
+}
+
 .userProfileBox {
-  width: 900px;
+  width: 100%;
 }
 
 .coverPic {
@@ -66,13 +87,13 @@ body {
 .userPosts {
   width: 840px;
   margin: 0 auto;
-  background-color: chartreuse;
   height: 10px;
 }
 
 .updateBox {
   position: absolute;
-  top: 50%;
+  top: 20%;
+  left: -0.5%;
   display: none;
 }
 
@@ -110,6 +131,6 @@ body {
 .icon4 {
   font-size: 35px;
   position: absolute;
-  left: 80%;
+  left: 68%;
   top: 5%;
 }

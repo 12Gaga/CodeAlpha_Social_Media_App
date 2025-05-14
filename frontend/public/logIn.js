@@ -33,7 +33,7 @@ logInButtonTag.addEventListener("click", async () => {
       window.location.replace(
         "/Social-media-app(Task-2)/frontend/public/home.html"
       );
-    }, 3000);
+    }, 1000);
   } catch (err) {
     console.log(err);
   }

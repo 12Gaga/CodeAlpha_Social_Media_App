@@ -9,40 +9,44 @@
     <link rel="stylesheet" href="home.css" />
   </head>
   <body>
-    <div class="container">
-      <div class="createPost">
-        <div
-          style="
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          "
-        >
-          <div style="display: flex; align-items: center">
-            <img class="userProfile currentUserProfile" src="" />
-            <input
-              class="postDesc"
-              type="text"
-              placeholder="What is on your mind!"
-            />
+    <div class="mother">
+      <div id="left"></div>
+      <div class="container">
+        <div class="createPost">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <div style="display: flex; align-items: center">
+              <img class="userProfile currentUserProfile" src="" />
+              <input
+                class="postDesc"
+                type="text"
+                placeholder="What is on your mind!"
+              />
+            </div>
+            <img class="image" style="display: none" />
           </div>
-          <img class="image" style="display: none" />
-        </div>
-        <div
-          style="
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-          "
-        >
-          <div>
-            <input type="file" id="file" style="display: none" />
-            <label for="file" class="upload-label"> 📷 Add Image </label>
+          <div
+            style="
+              margin-top: 15px;
+              display: flex;
+              justify-content: space-between;
+            "
+          >
+            <div>
+              <input type="file" id="file" style="display: none" />
+              <label for="file" class="upload-label"> 📷 Add Image </label>
+            </div>
+            <button type="button" class="postBtn">Post</button>
           </div>
-          <button type="button" class="postBtn">Post</button>
         </div>
+        <div class="posts"></div>
       </div>
-      <div class="posts"></div>
+      <div id="right"></div>
     </div>
     <script src="home.js"></script>
   </body>

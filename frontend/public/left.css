@@ -1,0 +1,25 @@
+.leftBox {
+  padding: 3% 0px 0px 3%;
+}
+
+.tilteBox {
+  display: flex;
+  align-items: center;
+}
+
+.leftImage {
+  border-radius: 100%;
+  width: 55px;
+  height: 55px;
+  margin-right: 15px;
+}
+
+.leftIcon {
+  font-size: 30px;
+  margin-right: 15px;
+}
+
+.leftText,
+p {
+  font-size: 20px;
+}

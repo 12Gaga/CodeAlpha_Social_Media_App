@@ -25,7 +25,7 @@ const gettingComments = async (postId, showCommentBox) => {
       const boxForEachComment = document.createElement("div");
       boxForEachComment.className = "boxForEachComment";
       boxForEachComment.innerHTML = `
-       <div class="info">
+       <div class="info2">
           <img class="userProfile" src="./upload/${comment.profilePic}"/>
           <span class="userName">${comment.name}</span>
         </div>
@@ -137,10 +137,13 @@ const gettingPosts = async () => {
       box.id = post.id;
       box.innerHTML = `
         <div class="info">
-          <img class="userProfile postProfile" id=${
-            post.userId
-          } src="./upload/${post.profilePic}"/>
-          <span class="userName">${post.name}</span>
+          <div class="info2">
+            <img class="userProfile postProfile" id=${
+              post.userId
+            } src="./upload/${post.profilePic}"/>
+            <span class="userName">${post.name}</span>
+          </div> 
+          <i class='bx bx-trash' id=${post.id}></i>
         </div>
         <p class="desc">${post.desc}</p>
         <img class="postImg" src="./upload/${post.img}"/>
@@ -161,7 +164,9 @@ const gettingPosts = async () => {
         <div class="commentContainer">
           <div class="commentBox">
             <div class="giveComment">
-                <img class="userProfile" src=${currentUser.profilePic}/>
+                <img class="userProfile" src="./upload/${
+                  currentUser.profilePic
+                }"/>
                 <input type="text" class="writeComment" placeholder="Write a comment"/>
             </div>              
               <button type="button" class="postBtn sendbtn">Send</button>
@@ -179,8 +184,16 @@ const gettingPosts = async () => {
         console.log("postId", postBox.id);
         const commentContainer = postBox.querySelector(".commentContainer");
         const showCommentTag = postBox.querySelector(".comments");
+        const value = commentBox.classList.contains("open");
         // Show the comment container for this post
-        commentContainer.style.display = "block";
+        if (value) {
+          commentBox.classList.remove("open");
+          commentContainer.style.display = "none";
+        } else {
+          commentBox.classList.add("open");
+          commentContainer.style.display = "block";
+        }
+
         //fetch comments
         gettingComments(postBox.id, showCommentTag);
 
@@ -208,18 +221,26 @@ const gettingPosts = async () => {
         handleLike(postBox.id, likedUserIds, likeBoxInput);
       });
     }
+    //click trash icon
+    const trashs = document.querySelectorAll(".bx-trash");
+    for (const trash of trashs) {
+      trash.addEventListener("click", async () => {
+        const trashId = trash.id;
+        handleDeletePost(trashId);
+      });
+    }
+    //click post profile
+    const postProfiles = document.querySelectorAll(".postProfile");
+    for (const profile of postProfiles) {
+      profile.addEventListener("click", () => {
+        localStorage.setItem("profileUserId", profile.id);
+        location.replace(
+          "/Social-media-app(Task-2)/frontend/public/profile.html"
+        );
+      });
+    }
   } catch (err) {
     console.log("postError", err);
-  }
-  //click post profile
-  const postProfiles = document.querySelectorAll(".postProfile");
-  for (const profile of postProfiles) {
-    profile.addEventListener("click", () => {
-      localStorage.setItem("profileUserId", profile.id);
-      location.replace(
-        "/Social-media-app(Task-2)/frontend/public/profile.html"
-      );
-    });
   }
 };
 gettingPosts();
@@ -253,7 +274,7 @@ btnTag.addEventListener("click", (e) => {
   handleClick(e);
 });
 
-const upload = async (e) => {
+const upload = async (file) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -271,7 +292,7 @@ const upload = async (e) => {
 const handleClick = async (e) => {
   e.preventDefault();
   let imgUrl = "";
-  if (file) imgUrl = await upload(e);
+  if (file) imgUrl = await upload(file);
   try {
     const res = await fetch("http://localhost:3000/post/addPost", {
       method: "POST",
@@ -289,3 +310,37 @@ const handleClick = async (e) => {
     console.log(err);
   }
 };
+
+//delete post
+const handleDeletePost = async (trashId) => {
+  try {
+    const res = await fetch("http://localhost:3000/post/deletePost", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ trashId }),
+    });
+    const data = await res.json();
+    console.log("Post deleted:", data);
+    gettingPosts();
+  } catch (err) {
+    console.log("DeletePostError", err);
+  }
+};
+
+//fetching html
+fetch("leftProfile.html")
+  .then((res) => res.text())
+  .then((data) => {
+    document.getElementById("left").innerHTML = data;
+    document.querySelector(
+      ".leftImage"
+    ).src = `./upload/${currentUser.profilePic}`;
+    document.querySelector(".leftName").innerHTML = currentUser.name;
+  });
+
+fetch("rightProfile.html")
+  .then((res) => res.text())
+  .then((data) => {
+    document.getElementById("right").innerHTML = data;
+  });

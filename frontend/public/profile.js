@@ -116,6 +116,7 @@ const gettingRelationship = async () => {
 
 //get post for this user
 const gettingUserPosts = async () => {
+  postsBox.innerHTML = "";
   try {
     const res = await fetch(
       `http://localhost:3000/post/getPost?userId=${userId}`,
@@ -128,7 +129,6 @@ const gettingUserPosts = async () => {
     let posts = [...postData];
     console.log("postData", postData);
     for (const post of posts) {
-      console.log("de");
       const likes = await gettingLikeOfPost(post.id);
       const likeIcon = likes.includes(currentUser.id)
         ? `<i class="bx bxs-heart icon2 like"></i>`
@@ -139,10 +139,13 @@ const gettingUserPosts = async () => {
       box.id = post.id;
       box.innerHTML = `
         <div class="info">
-          <img class="userProfile postProfile" id=${
-            post.userId
-          } src="./upload/${post.profilePic}"/>
-          <span class="userName">${post.name}</span>
+           <div class="info2">
+            <img class="userProfile postProfile" id=${
+              post.userId
+            } src="./upload/${post.profilePic}"/>
+            <span class="userName">${post.name}</span>
+           </div>
+           <i class='bx bx-trash' id=${post.id}></i> 
         </div>
         <p class="desc">${post.desc}</p>
         <img class="postImg" src="./upload/${post.img}"/>
@@ -163,7 +166,9 @@ const gettingUserPosts = async () => {
         <div class="commentContainer">
           <div class="commentBox">
             <div class="giveComment">
-                <img class="userProfile" src=${currentUser.profilePic}/>
+                <img class="userProfile" src="./upload/${
+                  currentUser.profilePic
+                }"/>
                 <input type="text" class="writeComment" placeholder="Write a comment"/>
             </div>              
               <button type="button" class="postBtn sendbtn">Send</button>
@@ -172,36 +177,73 @@ const gettingUserPosts = async () => {
         </div>
         `;
       postsBox.append(box);
+      //click comment box
+      const commentBoxs = document.querySelectorAll(".comment");
+      commentBoxs.forEach((commentBox) => {
+        commentBox.addEventListener("click", (e) => {
+          const postBox = e.target.closest(".postBox");
+          console.log("postId", postBox.id);
+          const commentContainer = postBox.querySelector(".commentContainer");
+          const showCommentTag = postBox.querySelector(".comments");
+          // Show the comment container for this post
+          const isOpen = commentBox.classList.contains("open");
+          commentBox.classList.toggle("open");
+          commentContainer.style.display = isOpen ? "none" : "block";
+          //fetch comments
+          if (!isOpen) {
+            gettingComments(postBox.id, showCommentTag);
+          }
+
+          //create new comment
+          const writeCommentInput = postBox.querySelector(".writeComment");
+          const sendbtnTag = postBox.querySelector(".sendbtn");
+
+          // Listen for typing in the comment input
+          if (!writeCommentInput.classList.contains("listener-attached")) {
+            writeCommentInput.addEventListener("keyup", (e) => {
+              commentDesc = e.target.value;
+            });
+            writeCommentInput.classList.add("listener-attached");
+          }
+
+          if (!sendbtnTag.classList.contains("listener-attached")) {
+            sendbtnTag.addEventListener("click", () =>
+              handleComment(postBox.id, showCommentTag, writeCommentInput)
+            );
+            sendbtnTag.classList.add("listener-attached");
+          }
+          writeCommentInput.value = "";
+        });
+      });
+      //click like icon
+      const icons = document.querySelectorAll(".like");
+      for (const icon of icons) {
+        icon.addEventListener("click", async (e) => {
+          const postBox = e.target.closest(".postBox");
+          const likeBoxInput = postBox.querySelector(".likeBox");
+          const likedUserIds = await gettingLikeOfPost(postBox.id);
+          handleLike(postBox.id, likedUserIds, likeBoxInput);
+        });
+      }
+      //click trash icon
+      const trashs = document.querySelectorAll(".bx-trash");
+      for (const trash of trashs) {
+        trash.addEventListener("click", async () => {
+          const trashId = trash.id;
+          handleDeletePost(trashId);
+        });
+      }
     }
   } catch (err) {
     console.log("userPostsError", err);
   }
 };
-
 gettingUserPosts();
-
-//get like post
-const gettingLikeOfPost = async (postId) => {
-  try {
-    const res = await fetch(
-      `http://localhost:3000/like/getLikes?postId=${postId}`,
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
-    const likeData = await res.json();
-    console.log("commentData", likeData);
-    return likeData;
-  } catch (err) {
-    console.log("commentError", err);
-  }
-};
 
 //update profile
 let coverfile;
 let pofilefile;
-let profileName;
+let profileName = "";
 
 //update name
 const nameTag = document.querySelector(".updateName");
@@ -268,7 +310,7 @@ const handleClick = async (e) => {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
-        name: profileName,
+        name: profileName ? profileName : currentUser.name,
         coverPic: coverUrl,
         profilePic: profileUrl,
       }),
@@ -281,3 +323,145 @@ const handleClick = async (e) => {
     console.log(err);
   }
 };
+
+//Comments
+let commentDesc = "";
+let comments = [];
+//get comments & showing comments
+const gettingComments = async (postId, showCommentBox) => {
+  showCommentBox.innerHTML = "";
+  try {
+    const res = await fetch(
+      `http://localhost:3000/comment/getComments?postId=${postId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    const commentData = await res.json();
+    comments = [...commentData];
+    console.log("commentData", commentData);
+    comments.forEach((comment) => {
+      const boxForEachComment = document.createElement("div");
+      boxForEachComment.className = "boxForEachComment";
+      boxForEachComment.innerHTML = `
+       <div class="info2">
+          <img class="userProfile" src="./upload/${comment.profilePic}"/>
+          <span class="userName">${comment.name}</span>
+        </div>
+         <span class="descComment">${comment.desc}</span>
+       `;
+      showCommentBox.append(boxForEachComment);
+    });
+  } catch (err) {
+    console.log("commentError", err);
+  }
+};
+
+//add comment
+//click sent button
+const handleComment = async (postId, box, inputTag) => {
+  try {
+    const res = await fetch("http://localhost:3000/comment/addComment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ desc: commentDesc, postId }),
+    });
+    const data = await res.json();
+    console.log("Comment submitted:", data);
+    inputTag.value = "";
+    gettingComments(postId, box);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//Likes
+//get likes
+const gettingLikeOfPost = async (postId) => {
+  try {
+    const res = await fetch(
+      `http://localhost:3000/like/getLikes?postId=${postId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    const likeData = await res.json();
+    console.log("commentData", likeData);
+    return likeData;
+  } catch (err) {
+    console.log("commentError", err);
+  }
+};
+//give Like
+const handleLike = async (postId, likes, likeBox) => {
+  console.log(likes.includes(currentUser.id));
+  const fetching = likes.includes(currentUser.id)
+    ? "http://localhost:3000/like/deleteLike"
+    : "http://localhost:3000/like/addLike";
+  try {
+    const res = await fetch(fetching, {
+      method: likes.includes(currentUser.id) ? "DELETE" : "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ postId }),
+    });
+    const data = await res.json();
+    console.log("Like submitted:", data);
+
+    const updatedLikes = await gettingLikeOfPost(postId);
+    // Update icon
+    const updatedIcon = updatedLikes.includes(currentUser.id)
+      ? `<i class="bx bxs-heart icon2 like"></i>`
+      : `<i class="bx bx-heart icons like"></i>`;
+    // Update likeBox innerHTML
+    likeBox.innerHTML = `
+      ${updatedIcon}
+      <span class="text likeText">${updatedLikes.length} ${
+      updatedLikes.length <= 1 ? "like" : "likes"
+    }</span>
+    `;
+    const newIcon = likeBox.querySelector("i");
+    newIcon.addEventListener("click", () => {
+      handleLike(postId, updatedLikes, likeBox);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//delete post
+const handleDeletePost = async (trashId) => {
+  try {
+    const res = await fetch("http://localhost:3000/post/deletePost", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ trashId }),
+    });
+    const data = await res.json();
+    console.log("Post deleted:", data);
+    location.reload();
+  } catch (err) {
+    console.log("DeletePostError", err);
+  }
+};
+
+//fetching html
+fetch("leftProfile.html")
+  .then((res) => res.text())
+  .then((data) => {
+    document.getElementById("leftPage").innerHTML = data;
+    document.querySelector(
+      ".leftImage"
+    ).src = `./upload/${currentUser.profilePic}`;
+    document.querySelector(".leftName").innerHTML = currentUser.name;
+  });
+
+fetch("rightProfile.html")
+  .then((res) => res.text())
+  .then((data) => {
+    document.getElementById("rightPage").innerHTML = data;
+  });
