@@ -49,4 +49,20 @@ export const addPost = (req, res) => {
   });
 };
 
-export const deletePost = () => {};
+export const deletePost = (req, res) => {
+  const token = req.cookies.accessToken;
+  console.log("token", token);
+  if (!token) return res.status(401).json("Not Logged In");
+  jwt.verify(token, "secretkey", (err, userInfo) => {
+    if (err) return res.status(403).json("Token Invalid");
+    console.log("userIds", userInfo.id);
+
+    const q = `DELETE FROM posts WHERE "id"=$1 AND "userId"=$2`;
+    const values = [req.body.trashId, userInfo.id];
+    db.query(q, values, (err, data) => {
+      if (err) return res.status(500).json(err);
+      if (data.rowCount > 0) return res.json("Deleted post");
+      return res.status(403).json("You can delete only your post");
+    });
+  });
+};
