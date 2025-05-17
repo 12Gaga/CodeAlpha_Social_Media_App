@@ -53,3 +53,7 @@ p {
   font-weight: bold;
   text-decoration: underline;
 }
+
+.errorText {
+  font-size: 25px;
+}

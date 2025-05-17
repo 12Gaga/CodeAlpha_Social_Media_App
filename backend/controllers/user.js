@@ -30,7 +30,9 @@ export const updateUser = (req, res) => {
     ];
     db.query(q, values, (err, data) => {
       if (err) return res.status(500).json(err);
-      if (data.rowCount > 0) return res.json("Updated");
+      if (data.rowCount > 0) {
+        return res.json("Updated");
+      }
       return res.status(403).json("You can update only your profile");
     });
   });

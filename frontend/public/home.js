@@ -2,7 +2,9 @@ const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 console.log("currentUser", currentUser);
 
 const currentUserProfile = document.querySelector(".currentUserProfile");
-currentUserProfile.src = `./upload/${currentUser.profilePic}`;
+currentUserProfile.src = currentUser.profilePic
+  ? `./upload/${currentUser.profilePic}`
+  : `./defaultPic/defaultUser.jpg`;
 
 //Comments
 let commentDesc = "";
@@ -26,7 +28,11 @@ const gettingComments = async (postId, showCommentBox) => {
       boxForEachComment.className = "boxForEachComment";
       boxForEachComment.innerHTML = `
        <div class="info2">
-          <img class="userProfile" src="./upload/${comment.profilePic}"/>
+          <img class="userProfile" src=${
+            comment.profilePic
+              ? `./upload/${comment.profilePic}`
+              : `"./defaultPic/defaultUser.jpg"`
+          }/>
           <span class="userName">${comment.name}</span>
         </div>
          <span class="descComment">${comment.desc}</span>
@@ -115,9 +121,9 @@ const handleLike = async (postId, likes, likeBox) => {
 //Posts
 //get Post & showing posts
 let posts = [];
-const postsBox = document.querySelector(".posts");
+const postsBoxs = document.querySelector(".posts");
 const gettingPosts = async () => {
-  postsBox.innerHTML = "";
+  postsBoxs.innerHTML = "";
   try {
     const res = await fetch("http://localhost:3000/post/getPost", {
       method: "GET",
@@ -131,7 +137,10 @@ const gettingPosts = async () => {
       const likeIcon = likes.includes(currentUser.id)
         ? `<i class="bx bxs-heart icon2 like"></i>`
         : `<i class="bx bx-heart icons like"></i>`;
-      console.log("likeData", likes);
+      const profilePicUrl = post.profilePic
+        ? `./upload/${post.profilePic}`
+        : `"./defaultPic/defaultUser.jpg"`;
+      console.log("Url", profilePicUrl);
       const box = document.createElement("div");
       box.className = "postBox";
       box.id = post.id;
@@ -140,7 +149,7 @@ const gettingPosts = async () => {
           <div class="info2">
             <img class="userProfile postProfile" id=${
               post.userId
-            } src="./upload/${post.profilePic}"/>
+            } src=${profilePicUrl}/>
             <span class="userName">${post.name}</span>
           </div> 
           <i class='bx bx-trash' id=${post.id}></i>
@@ -164,9 +173,11 @@ const gettingPosts = async () => {
         <div class="commentContainer">
           <div class="commentBox">
             <div class="giveComment">
-                <img class="userProfile" src="./upload/${
+                <img class="userProfile" src=${
                   currentUser.profilePic
-                }"/>
+                    ? `./upload/${currentUser.profilePic}`
+                    : `"./defaultPic/defaultUser.jpg"`
+                }/>
                 <input type="text" class="writeComment" placeholder="Write a comment"/>
             </div>              
               <button type="button" class="postBtn sendbtn">Send</button>
@@ -174,7 +185,7 @@ const gettingPosts = async () => {
           <div class="comments"></div>
         </div>
         `;
-      postsBox.append(box);
+      postsBoxs.append(box);
     }
     //click comment box
     const commentBoxs = document.querySelectorAll(".comment");
@@ -333,9 +344,9 @@ fetch("leftProfile.html")
   .then((res) => res.text())
   .then((data) => {
     document.getElementById("left").innerHTML = data;
-    document.querySelector(
-      ".leftImage"
-    ).src = `./upload/${currentUser.profilePic}`;
+    document.querySelector(".leftImage").src = currentUser.profilePic
+      ? `./upload/${currentUser.profilePic}`
+      : `./defaultPic/defaultUser.jpg`;
     document.querySelector(".leftName").innerHTML = currentUser.name;
   });
 

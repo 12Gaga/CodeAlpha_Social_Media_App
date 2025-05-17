@@ -48,12 +48,18 @@ const gettingClickUser = async () => {
     childProfileBox.innerHTML = `
        <div class="profileBox">
       <div class="coverPicBox">
-        <img src="./upload/${userData.coverPic}" class="coverPic" />
+        <img src=${
+          userData.coverPic
+            ? `./upload/${userData.coverPic}`
+            : `"./defaultPic/defaultCoverPic.png"`
+        } class="coverPic" />
       </div>
       <div class="profilePicBox">
-        <img src="./upload/${
+        <img src=${
           userData.profilePic
-        }" class="profilePic" />                      
+            ? `./upload/${userData.profilePic}`
+            : `"./defaultPic/defaultUser.jpg"`
+        } class="profilePic" />                      
       </div>
       <div class="parentInfo">
       <div class="userInfoBox">
@@ -140,9 +146,11 @@ const gettingUserPosts = async () => {
       box.innerHTML = `
         <div class="info">
            <div class="info2">
-            <img class="userProfile postProfile" id=${
-              post.userId
-            } src="./upload/${post.profilePic}"/>
+            <img class="userProfile postProfile" id=${post.userId} src=${
+        post.profilePic
+          ? `./upload/${post.profilePic}`
+          : `"./defaultPic/defaultUser.jpg"`
+      }/>
             <span class="userName">${post.name}</span>
            </div>
            <i class='bx bx-trash' id=${post.id}></i> 
@@ -166,9 +174,11 @@ const gettingUserPosts = async () => {
         <div class="commentContainer">
           <div class="commentBox">
             <div class="giveComment">
-                <img class="userProfile" src="./upload/${
+                <img class="userProfile" src=${
                   currentUser.profilePic
-                }"/>
+                    ? `./upload/${currentUser.profilePic}`
+                    : `"./defaultPic/defaultUser.jpg"`
+                }/>
                 <input type="text" class="writeComment" placeholder="Write a comment"/>
             </div>              
               <button type="button" class="postBtn sendbtn">Send</button>
@@ -317,8 +327,17 @@ const handleClick = async (e) => {
     });
     const data = await res.json();
     console.log("Post submitted:", data);
-    location.reload();
-    return data;
+    try {
+      const res = await fetch(`http://localhost:3000/users/find/${userId}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const userData = await res.json();
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      location.reload();
+    } catch (err) {
+      console.log("err", err);
+    }
   } catch (err) {
     console.log(err);
   }
@@ -346,7 +365,11 @@ const gettingComments = async (postId, showCommentBox) => {
       boxForEachComment.className = "boxForEachComment";
       boxForEachComment.innerHTML = `
        <div class="info2">
-          <img class="userProfile" src="./upload/${comment.profilePic}"/>
+          <img class="userProfile" src=${
+            comment.profilePic
+              ? `./upload/${comment.profilePic}`
+              : `"./defaultPic/defaultUser.jpg"`
+          }/>
           <span class="userName">${comment.name}</span>
         </div>
          <span class="descComment">${comment.desc}</span>
@@ -454,9 +477,9 @@ fetch("leftProfile.html")
   .then((res) => res.text())
   .then((data) => {
     document.getElementById("leftPage").innerHTML = data;
-    document.querySelector(
-      ".leftImage"
-    ).src = `./upload/${currentUser.profilePic}`;
+    document.querySelector(".leftImage").src = currentUser.profilePic
+      ? `./upload/${currentUser.profilePic}`
+      : `./defaultPic/defaultUser.jpg`;
     document.querySelector(".leftName").innerHTML = currentUser.name;
   });
 

@@ -2,6 +2,7 @@
 const logInUserNameInput = document.querySelectorAll(".textField")[0];
 const logInPasswordInput = document.querySelectorAll(".textField")[1];
 const logInButtonTag = document.querySelector(".btn2");
+const errorTextTag = document.querySelector(".errorText");
 
 let logInData = {
   userName: "",
@@ -27,6 +28,11 @@ logInButtonTag.addEventListener("click", async () => {
       body: JSON.stringify(logInData),
     });
     const data = await response.json();
+    if (!response.ok) {
+      console.error("Login failed:", data);
+      errorTextTag.innerHTML = data;
+      return;
+    }
     console.log("data", data);
     localStorage.setItem("currentUser", JSON.stringify(data));
     setTimeout(() => {
