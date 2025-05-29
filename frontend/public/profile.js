@@ -257,6 +257,7 @@ let profileName = "";
 
 //update name
 const nameTag = document.querySelector(".updateName");
+nameTag.value = currentUser.name;
 nameTag.addEventListener("keyup", (e) => {
   profileName = e.target.value;
   console.log("updatedName", profileName);
@@ -266,11 +267,13 @@ nameTag.addEventListener("keyup", (e) => {
 const coverImageInput = document.querySelector("#coverFile");
 console.log("cover", coverImageInput);
 const coverImgTag = document.querySelector(".coverImage");
+coverImgTag.src = currentUser.coverPic
+  ? `./upload/${currentUser.coverPic}`
+  : "./defaultPic/defaultCoverPic.png";
 coverImageInput.addEventListener("change", function (e) {
   coverfile = e.target.files[0];
   console.log("selectedCoverFile", coverfile);
   if (coverfile) {
-    coverImgTag.style.display = "block";
     coverImgTag.src = URL.createObjectURL(coverfile);
   }
 });
@@ -278,11 +281,13 @@ coverImageInput.addEventListener("change", function (e) {
 //update profile image
 const profileImageInput = document.querySelector("#profileFile");
 const profileImgTag = document.querySelector(".profileImage");
+profileImgTag.src = currentUser.profilePic
+  ? `./upload/${currentUser.profilePic}`
+  : "./defaultPic/defaultUser.jpg";
 profileImageInput.addEventListener("change", function (e) {
   pofilefile = e.target.files[0];
   console.log("selectedCoverFile", pofilefile);
   if (pofilefile) {
-    profileImgTag.style.display = "block";
     profileImgTag.src = URL.createObjectURL(pofilefile);
   }
 });

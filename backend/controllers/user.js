@@ -37,3 +37,13 @@ export const updateUser = (req, res) => {
     });
   });
 };
+
+export const findUser = (req, res) => {
+  const userName = req.query.userName;
+  const q = "SELECT * FROM users WHERE name=$1";
+  db.query(q, [userName], (err, data) => {
+    if (err) return res.status(500).json(err);
+    const { password, ...others } = data.rows[0];
+    return res.status(200).json(others);
+  });
+};

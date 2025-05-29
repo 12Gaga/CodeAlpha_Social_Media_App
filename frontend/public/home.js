@@ -6,6 +6,50 @@ currentUserProfile.src = currentUser.profilePic
   ? `./upload/${currentUser.profilePic}`
   : `./defaultPic/defaultUser.jpg`;
 
+//Search User
+let findName = "";
+const searchUserTag = document.querySelector(".search");
+const searchBtnTag = document.querySelector(".searchBtn");
+const showFindUserTag = document.querySelector(".showFindUser");
+searchUserTag.addEventListener("keyup", async (e) => {
+  findName = e.target.value;
+  showFindUserTag.innerHTML = "";
+});
+
+searchBtnTag.addEventListener("click", async () => {
+  try {
+    const res = await fetch(
+      `http://localhost:3000/users/findUser?userName=${findName}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    const data = await res.json();
+    console.log("userData", data);
+    findName = "";
+    const showFindUser = document.createElement("div");
+    showFindUser.className = "findUser";
+    showFindUser.id = data.id;
+    showFindUser.innerHTML = `
+    <div class="info2 info4">
+          <img class="userProfile" src=${`./upload/${data.profilePic}`}/>
+          <span class="userName">${data.name}</span>
+        </div>
+    `;
+    showFindUserTag.append(showFindUser);
+    const clickFindUser = document.querySelector(".showFindUser");
+    clickFindUser.addEventListener("click", () => {
+      localStorage.setItem("profileUserId", data.id);
+      location.replace(
+        "/Social-media-app(Task-2)/frontend/public/profile.html"
+      );
+    });
+  } catch (err) {
+    console.log("commentError", err);
+  }
+});
+
 //Comments
 let commentDesc = "";
 let comments = [];
